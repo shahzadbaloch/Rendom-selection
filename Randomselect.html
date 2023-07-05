@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Random Member Selection</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/css/bootstrap.min.css">
+    <style>
+        .container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        @media (max-width: 576px) {
+            .card {
+                width: 90%;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="card">
+            <div class="card-body">
+                <h2 class="card-title text-center mb-4">Random Member Selection</h2>
+                <div class="mb-3">
+                    <input type="text" id="memberInput" class="form-control" placeholder="Enter a member name">
+                </div>
+                <div class="mb-3 d-grid">
+                    <div class="btn-group" role="group">
+                        <button class="btn btn-primary" type="button" onclick="addMember()">Add Member</button>
+                        <button class="btn btn-danger" type="button" onclick="resetMembers()"
+                            id="resetMembersButton">Reset Members</button>
+                    </div>
+                </div>
+                <div class="mt-4">
+                    <h3>Member List:</h3>
+                    <ul class="list-group" id="memberList"></ul>
+                </div>
+                <div class="mt-4">
+                    <div class="d-grid gap-2">
+                        <div class="btn-group" role="group">
+                            <button class="btn btn-primary" type="button" onclick="selectRandom()" id="randomButton"
+                                disabled>Random</button>
+                            <button class="btn btn-secondary" type="button" onclick="resetSelection()"
+                                id="resetSelectionButton" disabled>Reset Selected</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="mt-4">
+                    <h3>Selected Members:</h3>
+                    <ol class="list-group" id="selectedMembersList"></ol>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script>
+        let members = [];
+        let selectedMembers = [];
+
+        function addMember() {
+            let memberInput = document.getElementById('memberInput');
+            let memberName = memberInput.value.trim();
+
+            if (memberName !== '') {
+                members.push(memberName);
+                memberInput.value = '';
+                printMembers();
+                printSelectedMembers();
+                updateButtonState();
+            }
+        }
+
+        function selectRandom() {
+            if (members.length === 0) {
+                console.log('No members available.');
+                return;
+            }
+
+            if (selectedMembers.length === members.length) {
+                console.log('All members have already been selected.');
+                return;
+            }
+
+            let randomIndex;
+            let randomName;
+
+            do {
+                randomIndex = Math.floor(Math.random() * members.length);
+                randomName = members[randomIndex];
+            } while (selectedMembers.includes(randomName));
+
+            selectedMembers.push(randomName);
+            printSelectedMembers();
+            updateButtonState();
+        }
+
+        function resetSelection() {
+            selectedMembers = [];
+            printSelectedMembers();
+            updateButtonState();
+        }
+
+        function resetMembers() {
+            members = [];
+            selectedMembers = [];
+            printMembers();
+            printSelectedMembers();
+            updateButtonState();
+        }
+
+        function printMembers() {
+            let memberList = document.getElementById('memberList');
+            memberList.innerHTML = '';
+
+            for (let i = 0; i < members.length; i++) {
+                let listItem = document.createElement('li');
+                listItem.className = 'list-group-item';
+                listItem.textContent = members[i];
+                memberList.appendChild(listItem);
+            }
+        }
+
+        function printSelectedMembers() {
+            let selectedMembersList = document.getElementById('selectedMembersList');
+            selectedMembersList.innerHTML = '';
+
+            for (let i = 0; i < selectedMembers.length; i++) {
+                let listItem = document.createElement('li');
+                listItem.className = 'list-group-item';
+                listItem.textContent = `${i + 1}. ${selectedMembers[i]}`;
+                selectedMembersList.appendChild(listItem);
+            }
+        }
+
+        function updateButtonState() {
+            let randomButton = document.getElementById('randomButton');
+            let resetSelectionButton = document.getElementById('resetSelectionButton');
+            let resetMembersButton = document.getElementById('resetMembersButton');
+
+            if (randomButton) {
+                randomButton.disabled = members.length < 2;
+            }
+
+            if (resetSelectionButton) {
+                resetSelectionButton.disabled = selectedMembers.length === 0;
+            }
+
+            if (resetMembersButton) {
+                resetMembersButton.disabled = members.length === 0;
+            }
+        }
+    </script>
+</body>
+
+</html>
